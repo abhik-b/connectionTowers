@@ -1,7 +1,17 @@
-function connectionTowers() {
+function connectionTowers({
+  margin = "1px",
+  rounded = false,
+  height = 20,
+  showConnection = true,
+  colors = ["green", "yellow", "red"],
+}) {
   const parentDiv = document.querySelectorAll(".connectionTower");
-  var background = "red";
-  var margin = "1px";
+
+  var background = colors[0];
+  var background3g = colors[0];
+  var background2g = colors[0];
+  var margin = margin;
+  var height = height;
 
   var connection =
     navigator.connection ||
@@ -21,10 +31,10 @@ function connectionTowers() {
   tallestTower.style.background = background;
   connectionInfo.textContent = "4g";
 
-  smallestTower.style.height = "5px";
-  smallTower.style.height = "10px";
-  tallTower.style.height = "15px";
-  tallestTower.style.height = "20px";
+  smallestTower.style.height = `${height * 0.25}px`;
+  smallTower.style.height = `${height * 0.5}px`;
+  tallTower.style.height = `${height * 0.75}px`;
+  tallestTower.style.height = `${height}px`;
 
   smallestTower.style.width = "5px";
   smallTower.style.width = "5px";
@@ -36,35 +46,49 @@ function connectionTowers() {
   tallTower.style.margin = margin;
   tallestTower.style.margin = margin;
 
+  if (rounded) {
+    smallestTower.style.borderRadius = "20px";
+    smallTower.style.borderRadius = "20px";
+    tallTower.style.borderRadius = "20px";
+    tallestTower.style.borderRadius = "20px";
+  }
+
   connection.addEventListener("change", () => {
     type = connection.effectiveType;
     switch (type) {
       case "4g":
-        background = "green";
+        background = colors[0];
+        background3g = colors[0];
+        background2g = colors[0];
         break;
       case "3g":
-        background = "yellow";
+        background = colors[1];
+        background3g = "transparent";
+        background2g = colors[1];
+
         break;
       default:
-        background = "red";
+        background = colors[2];
+        background3g = "transparent";
+        background2g = "transparent";
     }
     smallestTower.style.background = background;
     smallTower.style.background = background;
-    tallTower.style.background = background;
-    tallestTower.style.background = background;
+    tallTower.style.background = background2g;
+    tallestTower.style.background = background3g;
     connectionInfo.textContent = type;
   });
 
   parentDiv.forEach((pDiv) => {
-    pDiv.append(
-      connectionInfo,
-      smallestTower,
-      smallTower,
-      tallTower,
-      tallestTower
-    );
+    if (showConnection) {
+      pDiv.append(connectionInfo);
+      pDiv.style.gridTemplateColumns = "1fr 1fr 1fr 1fr 1fr";
+    } else {
+      pDiv.style.gridTemplateColumns = "1fr 1fr 1fr 1fr";
+    }
+    pDiv.append(smallestTower, smallTower, tallTower, tallestTower);
     pDiv.style.display = "grid";
-    pDiv.style.gridTemplateColumns = "1fr 1fr 1fr 1fr 1fr";
+
     pDiv.style.alignItems = "end";
     pDiv.style.background = "transparent";
     pDiv.style.height = "20px";
